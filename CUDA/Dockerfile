@@ -21,9 +21,13 @@ RUN . ./env/bin/activate && pip uninstall -y torch torchvision torchaudio && ./u
 
 ENV DEBIAN_FRONTEND=dialog
 
-# Exposing port 7860
-EXPOSE 7860/tcp
+# Exposing a range of ports
+EXPOSE 7860-8000
 
-# Launch at startup
-CMD [ "/home/biniou/biniou/webui.sh" ]
+# Create an entrypoint script
+RUN echo '#!/bin/bash\n\
+exec /home/biniou/biniou/webui.sh "$@"' > /home/biniou/entrypoint.sh && \
+chmod +x /home/biniou/entrypoint.sh
 
+# Set the entrypoint
+ENTRYPOINT ["/home/biniou/entrypoint.sh"]
